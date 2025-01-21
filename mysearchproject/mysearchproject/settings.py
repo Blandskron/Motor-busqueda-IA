@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-OPENAI_API_KEY='aqui api key'
+OPENAI_API_KEY='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'
 
 ELASTICSEARCH_DSL = {
     'default': {
