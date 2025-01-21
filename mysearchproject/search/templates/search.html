@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda con OpenAI y Elasticsearch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Búsqueda con OpenAI y Elasticsearch</h1>
+        <textarea id="prompt" placeholder="Escribe tu prompt aquí..."></textarea>
+        <button onclick="search()">Buscar</button>
+
+        <div class="results" id="results">
+            <!-- Aquí se mostrarán los resultados -->
+        </div>
+    </div>
+
+    <script>
+        async function search() {
+            const prompt = document.getElementById('prompt').value;
+            if (!prompt) {
+                alert("Por favor, escribe un prompt.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/search/?prompt=${encodeURIComponent(prompt)}`);
+                const data = await response.json();
+
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Limpiar resultados anteriores
+
+                if (response.ok) {
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            const resultItem = document.createElement('div');
+                            resultItem.className = 'result-item';
+                            resultItem.textContent = JSON.stringify(item, null, 2);
+                            resultsDiv.appendChild(resultItem);
+                        });
+                    } else {
+                        resultsDiv.textContent = "No se encontraron resultados.";
+                    }
+                } else {
+                    resultsDiv.textContent = `Error: ${data.message || "Error en la búsqueda."}`;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Ocurrió un error al realizar la búsqueda.");
+            }
+        }
+    </script>
+</body>
+</html>
